@@ -1,0 +1,70 @@
+<% include ./partials/header.ejs %>
+
+<div class="w-full min-h-screen bg-zinc-900 text-white py-5 flex flex-col items-center justify-center">
+  <div class="flex flex-col items-center gap-5 px-4">
+    <h1 class="text-3xl">Flickora</h1>
+
+    <!-- Error Message -->
+    <p id="errorMsg" class="hidden text-red-500 bg-red-950 px-4 py-2 rounded-md w-full text-center"></p>
+
+    <form id="loginForm" class="w-full">
+      <input class="px-3 mt-2 py-2 border-2 border-zinc-800 rounded-md block w-full bg-zinc-900"
+             type="text" placeholder="username" name="username" required>
+
+      <input class="px-3 mt-2 py-2 border-2 border-zinc-800 rounded-md block w-full bg-zinc-900"
+             type="password" placeholder="password" name="password" required>
+
+      <button id="loginBtn" type="submit" class="w-full bg-blue-500 px-3 py-3 rounded-md mt-2 flex items-center justify-center gap-2">
+        <span>Log In</span>
+        <svg id="spinner" class="hidden w-5 h-5 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+      </button>
+    </form>
+
+    <span>Don't have an account? <a href="/" class="text-blue-500">Sign Up</a></span>
+  </div>
+</div>
+
+<script>
+  const loginForm = document.getElementById('loginForm');
+  const loginBtn = document.getElementById('loginBtn');
+  const spinner = document.getElementById('spinner');
+  const errorMsg = document.getElementById('errorMsg');
+
+  loginForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    // Show spinner, disable button
+    spinner.classList.remove('hidden');
+    loginBtn.disabled = true;
+
+    const formData = new FormData(this);
+    const data = {
+      username: formData.get('username'),
+      password: formData.get('password')
+    };
+
+    const res = await fetch('/ajax-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    // Hide spinner, enable button
+    spinner.classList.add('hidden');
+    loginBtn.disabled = false;
+
+    if (result.success) {
+      window.location.href = '/feed';  // Login Success
+    } else {
+      errorMsg.textContent = result.message;
+      errorMsg.classList.remove('hidden');
+    }
+  });
+</script>
+
+<% include ./partials/footer.ejs %>

@@ -1,0 +1,59 @@
+<%- include("partials/header") %>
+
+<div class="flex flex-col h-screen bg-zinc-900 text-white">
+  <!-- Top Bar -->
+  <div
+    class="flex items-center p-4 border-b border-zinc-800 sticky top-0 bg-zinc-900 z-10"
+  >
+    <a href="/inbox" class="mr-4">
+      <i class="fas fa-arrow-left text-xl text-white"></i>
+    </a>
+    <!--<img
+      src="<%= otherUser.profilePic ||'/public/images/default.jpg' %>"
+      class="w-10 h-10 rounded-full mr-3 object-cover"
+      alt="profile"
+    />-->
+    <img src="<%= otherUser.profilePic || '/images/default.jpg' %>" class="w-10 h-10 rounded-full mr-2" alt="profile">
+
+    <h2 class="text-lg font-semibold"><%= otherUser.name || otherUser.username %></h2>
+  </div>
+
+  <!-- Chat Messages -->
+  <div id="chatBox" class="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+    <% messages.forEach(msg=> { %>
+    <div
+      class="<%= msg.sender.equals(currentUser._id) ? 'text-right' : 'text-left' %>"
+    >
+      <span
+        class="inline-block px-4 py-2 rounded-2xl max-w-xs <%= msg.sender.equals(currentUser._id) ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black' %>"
+      >
+        <%= msg.text %>
+      </span>
+    </div>
+    <% }) %>
+  </div>
+
+  <!-- Message Input -->
+  <form
+    action="/chat/<%= otherUser._id %>"
+    method="POST"
+    class="p-3 flex items-center gap-2 border-t border-zinc-800 bg-zinc-900 sticky bottom-0"
+  >
+    <input
+      type="text"
+      name="text"
+      placeholder="Message..."
+      class="flex-1 px-4 py-2 rounded-full bg-zinc-800 text-white border-none outline-none"
+      required
+    />
+    <button type="submit" class="bg-blue-600 px-4 py-2 rounded-full text-white">
+      Send
+    </button>
+  </form>
+</div>
+
+<script>
+  // Scroll to bottom of chat on load
+  const chatBox = document.getElementById("chatBox");
+  chatBox.scrollTop = chatBox.scrollHeight;
+</script>
